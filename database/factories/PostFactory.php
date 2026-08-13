@@ -20,7 +20,7 @@ class PostFactory extends Factory
     public function definition(): array
     {
         $title = fake()->sentence(6);
-        $status = fake()->randomElement(['active', 'active', 'active', 'inActive']);
+        $status = fake()->randomElement(['draft', 'published']);
 
         return [
             'author_id' => User::factory(),
@@ -29,7 +29,7 @@ class PostFactory extends Factory
             'content' => implode("\n\n", fake()->paragraphs(6)),
             'cover_image' => 'https://picsum.photos/seed/' . fake()->uuid() . '/800/400',
             'status' => $status,
-            'published_at' => $status === 'active' ? fake()->dateTimeBetween('-6 months', 'now') : null,
+            'published_at' => $status === 'published' ? fake()->dateTimeBetween('-6 months', 'now') : null,
         ];
     }
 }
