@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('form_answers', function (Blueprint $table) {
+        Schema::create('submission-answers', function (Blueprint $table) {
             $table->id();
             $table->foreignId('submission_id')->constrained('form_submissions')->onDelete('cascade');
             $table->foreignId('field_id')->constrained('form_fields')->onDelete('cascade');
