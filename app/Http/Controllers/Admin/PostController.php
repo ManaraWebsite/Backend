@@ -79,8 +79,38 @@ class PostController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Post $post)
     {
-        //
+        $post->delete();
+
+        return response()->json(null, 204);
+    }
+
+    public function publish(Post $post)
+    {
+        if ($post->isPublished()) {
+            return response()->json(['message' => 'Post is already published.'], 400);
+        }
+
+        $post->update([
+            'status' => 'published',
+            'published_at' => now(),
+        ]);
+
+        return new PostResource($post);
+    }
+
+    public function unpublish(Post $post)
+    {
+        if (!$post->isPublished()) {
+            return response()->json(['message' => 'Post is not published.'], 400);
+        }
+
+        $post->update([
+            'status' => 'draft',
+            'published_at' => null,
+        ]);
+
+        return new PostResource($post);
     }
 }

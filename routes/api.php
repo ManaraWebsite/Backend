@@ -20,13 +20,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 
     Route::middleware('admin')->prefix('/admin')->group(function () {
-        Route::get('/posts', [AdminPostController::class, 'index']);
-        Route::post('/posts', [AdminPostController::class, 'store']);
-        Route::get('/posts/{post:slug}', [AdminPostController::class, 'show']);
-        Route::put('/posts/{post:slug}', [AdminPostController::class, 'update']);  //i'm heeeeere
-        // Route::delete('/posts/{post:slug}', [AdminPostController::class, 'destroy']);
+        Route::apiResource('/posts', AdminPostController::class)->parameters([
+            'posts' => 'post:slug',
+        ]);
+        Route::post('/posts/{post:slug}/publish', [AdminPostController::class, 'publish']);
+        Route::post('/posts/{post:slug}/unpublish', [AdminPostController::class, 'unpublish']);
     });
 });
 
-Route::get('/posts', [UserPostController::class, 'index']);
-Route::get('/posts/{post:slug}', [UserPostController::class, 'show']);
+Route::apiResource('/posts', UserPostController::class)->only(['index', 'show'])->parameters([
+    'posts' => 'post:slug',
+]);
