@@ -1,9 +1,10 @@
 <?php
 
-use App\Http\Controllers\Admin\PostController as AdminPostController;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\FormController as UserFormController;
+use App\Http\Controllers\Admin\PostController as AdminPostController;
 use App\Http\Controllers\PostController as UserPostController;
+use App\Http\Controllers\Admin\FormController as AdminFormController;
+use App\Http\Controllers\FormController as UserFormController;
 use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -21,11 +22,20 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 
     Route::middleware('admin')->prefix('/admin')->group(function () {
+        // Admin Posts routes
         Route::apiResource('/posts', AdminPostController::class)->parameters([
             'posts' => 'post:slug',
         ]);
         Route::post('/posts/{post:slug}/publish', [AdminPostController::class, 'publish']);
         Route::post('/posts/{post:slug}/unpublish', [AdminPostController::class, 'unpublish']);
+
+        // Admin Forms routes
+        Route::get('forms', [AdminFormController::class, 'index'])->name('forms.index');
+        Route::post('forms', [AdminFormController::class, 'store'])->name('forms.store');
+        Route::get('forms/{form:slug}', [AdminFormController::class, 'show'])->name('forms.show');
+        Route::put('forms/{form:slug}', [AdminFormController::class, 'update'])->name('forms.update');
+        Route::delete('forms/{form:slug}', [AdminFormController::class, 'destroy'])->name('forms.destroy');
+        Route::post('forms/{form:slug}/duplicate', [AdminFormController::class, 'duplicate'])->name('forms.duplicate');
     });
 });
 
