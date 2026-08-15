@@ -12,7 +12,7 @@ class PostController extends Controller
      */
     public function index()
     {
-        $posts = Post::with('author')->paginate();
+        $posts = Post::with('author')->where('status', 'published')->paginate();
 
         return response()->json([
             'data' => PostResource::collection($posts),
