@@ -30,11 +30,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/posts/{post:slug}/unpublish', [AdminPostController::class, 'unpublish']);
 
         // Admin Forms routes
-        Route::get('forms', [AdminFormController::class, 'index'])->name('forms.index');
-        Route::post('forms', [AdminFormController::class, 'store'])->name('forms.store');
-        Route::get('forms/{form:slug}', [AdminFormController::class, 'show'])->name('forms.show');
-        Route::put('forms/{form:slug}', [AdminFormController::class, 'update'])->name('forms.update');
-        Route::delete('forms/{form:slug}', [AdminFormController::class, 'destroy'])->name('forms.destroy');
+        Route::apiResource('/forms', AdminFormController::class)->parameters([
+            'forms' => 'form:slug',
+        ]);
         Route::post('forms/{form:slug}/duplicate', [AdminFormController::class, 'duplicate'])->name('forms.duplicate');
     });
 });
