@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StorePostRequest;
+use App\Http\Requests\UpdatePostRequest;
 use App\Http\Resources\PostResource;
 use App\Models\Post;
 use Illuminate\Http\Request;
@@ -30,6 +31,10 @@ class PostController extends Controller
 
         $validatedData['slug'] = Str::random(8) . '-' . Str::slug($validatedData['title']);
 
+        if ($validatedData['status'] === 'published') {
+            $validatedData['published_at'] = now();
+        }
+
         if ($request->hasFile('cover_image')) {
             $validatedData['cover_image'] = $request->file('cover_image')
                 ->store('posts', 'public');
@@ -43,17 +48,32 @@ class PostController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Post $post)
     {
-        //
+        $post->load('author');
+
+        return new PostResource($post);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdatePostRequest $request, Post $post)
     {
-        //
+        $validatedData = $request->validated();
+
+        if ($request->has('status') && $validatedData['status'] === 'published') {
+            $validatedData['published_at'] = now();
+        }
+
+        if ($request->hasFile('cover_image')) {
+            $validatedData['cover_image'] = $request->file('cover_image')
+                ->store('posts', 'public');
+        }
+
+        $post->update($validatedData);
+
+        return new PostResource($post);
     }
 
     /**

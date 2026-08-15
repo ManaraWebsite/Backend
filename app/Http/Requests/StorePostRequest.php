@@ -12,7 +12,7 @@ class StorePostRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return $this->user()?->role === 'admin';
     }
 
     /**
@@ -27,7 +27,6 @@ class StorePostRequest extends FormRequest
             'content' => ['required', 'string'],
             'cover_image' => ['nullable', 'image', 'max:2048'],
             'status' => ['required', 'in:draft,published'],
-            'published_at' => ['nullable', 'date'],
         ];
     }
 }
