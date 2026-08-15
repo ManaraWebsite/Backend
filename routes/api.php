@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\PostController as AdminPostController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\FormController as UserFormController;
 use App\Http\Controllers\PostController as UserPostController;
 use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
@@ -31,3 +32,6 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::apiResource('/posts', UserPostController::class)->only(['index', 'show'])->parameters([
     'posts' => 'post:slug',
 ]);
+
+Route::get('/forms/{form:slug}', [UserFormController::class, 'show'])->name('forms.show');
+Route::post('/forms/{form:slug}/submit', [UserFormController::class, 'submit'])->middleware('throttle:5,1')->name('forms.submit');
