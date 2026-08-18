@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Admin\PostController as AdminPostController;
+use App\Http\Controllers\FieldVoiceController;
 use App\Http\Controllers\PostController as UserPostController;
 use App\Http\Controllers\Admin\FormController as AdminFormController;
 use App\Http\Controllers\FormController as UserFormController;
@@ -37,6 +38,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('forms/{form:slug}/duplicate', [AdminFormController::class, 'duplicate'])->name('forms.duplicate');
         Route::get('forms/{form:slug}/submissions', [AdminFormSubmissionController::class, 'index'])->name('forms.submissions');
         Route::get('forms/{form:slug}/submissions/export', [AdminFormSubmissionController::class, 'export'])->name('forms.submissions.export');
+
+        Route::apiResource('/field-voices', FieldVoiceController::class)->except('show');
     });
 });
 
@@ -46,3 +49,5 @@ Route::apiResource('/posts', UserPostController::class)->only(['index', 'show'])
 
 Route::get('/forms/{form:slug}', [UserFormController::class, 'show'])->name('forms.show');
 Route::post('/forms/{form:slug}/submit', [UserFormController::class, 'submit'])->middleware('throttle:5,1')->name('forms.submit');
+
+Route::apiResource('/field-voices', FieldVoiceController::class)->only('index');
