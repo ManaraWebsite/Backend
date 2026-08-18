@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\PostController as AdminPostController;
 use App\Http\Controllers\PostController as UserPostController;
 use App\Http\Controllers\Admin\FormController as AdminFormController;
 use App\Http\Controllers\FormController as UserFormController;
+use App\Http\Controllers\Admin\FormSubmissionController as AdminFormSubmissionController;
 use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -34,6 +35,8 @@ Route::middleware('auth:sanctum')->group(function () {
             'forms' => 'form:slug',
         ]);
         Route::post('forms/{form:slug}/duplicate', [AdminFormController::class, 'duplicate'])->name('forms.duplicate');
+        Route::get('forms/{form:slug}/submissions', [AdminFormSubmissionController::class, 'index'])->name('forms.submissions');
+        Route::get('forms/{form:slug}/submissions/export', [AdminFormSubmissionController::class, 'export'])->name('forms.submissions.export');
     });
 });
 

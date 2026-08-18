@@ -21,6 +21,6 @@ class FormSubmission extends Model
 
     public function answers()
     {
-        return $this->hasMany(SubmissionAnswer::class);
+        return $this->hasMany(SubmissionAnswer::class, 'submission_id');
     }
 }
