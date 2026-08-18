@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('role')->nullable();
-            $table->string('quote');
+            $table->text('quote');
             $table->string('image')->nullable();
             $table->boolean('is_published')->default(true);
             $table->timestamps();
