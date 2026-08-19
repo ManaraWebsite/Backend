@@ -1,58 +1,145 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Manara Website — Backend
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+REST API backend for the Manara website, built with [Laravel](https://laravel.com). It serves blog-style posts, a dynamic form builder with public submissions, and a "Field Voices" testimonials section, behind Sanctum token authentication with `user` / `admin` roles.
 
-## About Laravel
+## Tech Stack
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- PHP 8.3+
+- Laravel 13
+- Laravel Sanctum — API token authentication
+- PostgreSQL (production) / SQLite (local default)
+- Vite + Tailwind CSS 4 — asset bundling
+- PHPUnit — testing
+- Laravel Pint — code style
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Features
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+**Auth**
+- Token login/logout (`POST /login`, `POST /logout`)
+- Role-based access (`user`, `admin`) enforced by the `admin` middleware (`app/Http/Middleware/EnsureUserIsAdmin.php`)
 
-## Learning Laravel
+**Posts**
+- Admin CRUD, slug-based, with cover image upload and `draft` / `published` status
+- Publish / unpublish actions
+- Public listing and reading of posts
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+**Forms**
+- Admin builds forms made of ordered, typed fields (`text`, `email`, `select`, `radio`, …), optionally required, with per-field options
+- Admin can duplicate a form
+- Public can view a form by slug and submit answers (rate-limited to 5 submissions/minute)
+- Admin can list and export a form's submissions
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+**Field Voices**
+- Admin CRUD for testimonial entries (name, role, quote, image, published flag)
+- Public listing of published entries
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+## Requirements
 
-## Agentic Development
+- PHP >= 8.3 with the extensions Laravel needs (`pdo`, `mbstring`, `fileinfo`, …)
+- Composer
+- Node.js + npm
+- PostgreSQL (or SQLite for local development)
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+## Getting Started
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+composer install
+cp .env.example .env
+php artisan key:generate
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Set your database credentials in `.env` (defaults to SQLite; production uses `DB_CONNECTION=pgsql`), then:
 
-## Contributing
+```bash
+php artisan migrate
+php artisan db:seed        # optional — creates an admin user and sample data
+php artisan storage:link   # needed for post cover images / field-voice images
+npm install
+npm run build               # or `npm run dev` while developing
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Run everything (server, queue listener, log viewer, Vite) at once:
 
-## Code of Conduct
+```bash
+composer run dev
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Or just the API server:
 
-## Security Vulnerabilities
+```bash
+php artisan serve
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### Seeded admin account
 
-## License
+Running `php artisan db:seed` creates:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- email: `admin@example.com`
+- password: `password`
+
+## API Overview
+
+All routes are prefixed with `/api`. Authenticated requests use a Sanctum bearer token: `Authorization: Bearer <token>`.
+
+**Public**
+
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/api-test` | Health check |
+| POST | `/login` | Log in, returns a bearer token |
+| GET | `/posts` | List published posts |
+| GET | `/posts/{post:slug}` | Show a post |
+| GET | `/forms/{form:slug}` | Show a form's fields |
+| POST | `/forms/{form:slug}/submit` | Submit answers to a form (throttled: 5/min) |
+| GET | `/field-voices` | List published field voices |
+
+**Authenticated** (`auth:sanctum`)
+
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/user` | Current authenticated user |
+| POST | `/logout` | Revoke the current token |
+
+**Admin** (`auth:sanctum` + `admin`, prefixed `/admin`)
+
+| Method | Endpoint | Description |
+|---|---|---|
+| GET/POST | `/admin/posts` | List / create posts |
+| GET/PUT/DELETE | `/admin/posts/{post:slug}` | Show / update / delete a post |
+| POST | `/admin/posts/{post:slug}/publish` | Publish a post |
+| POST | `/admin/posts/{post:slug}/unpublish` | Unpublish a post |
+| GET/POST | `/admin/forms` | List / create forms |
+| GET/PUT/DELETE | `/admin/forms/{form:slug}` | Show / update / delete a form |
+| POST | `/admin/forms/{form:slug}/duplicate` | Duplicate a form |
+| GET | `/admin/forms/{form:slug}/submissions` | List a form's submissions |
+| GET | `/admin/forms/{form:slug}/submissions/export` | Export a form's submissions |
+| GET/POST | `/admin/field-voices` | List / create field voices |
+| PUT/DELETE | `/admin/field-voices/{field_voice}` | Update / delete a field voice |
+
+## Testing
+
+```bash
+composer test
+# or
+php artisan test
+```
+
+## Code Style
+
+```bash
+./vendor/bin/pint
+```
+
+## Project Structure
+
+```
+app/Http/Controllers/          Public controllers (Posts, Forms, FieldVoices, Auth)
+app/Http/Controllers/Admin/    Admin-only controllers
+app/Http/Requests/             Form request validation
+app/Http/Resources/            API resource transformers
+app/Models/                    Eloquent models
+database/migrations/           Schema
+database/factories/            Model factories
+database/seeders/              DatabaseSeeder
+routes/api.php                 All API routes
+```
