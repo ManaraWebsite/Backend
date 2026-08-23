@@ -18,7 +18,7 @@ class SubmissionAnswerResource extends JsonResource
             'id' => $this->id,
             'submission_id' => $this->submission_id,
             'field_id' => $this->field_id,
-            'field-name' => $this->field->label,
+            'field-name' => $this->field->label_ar,
             'answer' => $this->answer,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

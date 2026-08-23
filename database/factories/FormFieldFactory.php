@@ -20,7 +20,7 @@ class FormFieldFactory extends Factory
     {
         return [
             'form_id' => Form::factory(),
-            'label' => 'Full name',
+            'label_ar' => 'Full name',
             'type' => 'text',
             'options' => null,
             'is_required' => true,
@@ -30,8 +30,8 @@ class FormFieldFactory extends Factory
 
     public function email(int $order = 2): static
     {
-        return $this->state(fn() => [
-            'label' => 'Email',
+        return $this->state(fn () => [
+            'label_ar' => 'Email',
             'type' => 'email',
             'options' => null,
             'is_required' => true,
@@ -41,8 +41,8 @@ class FormFieldFactory extends Factory
 
     public function university(int $order = 3): static
     {
-        return $this->state(fn() => [
-            'label' => 'University',
+        return $this->state(fn () => [
+            'label_ar' => 'University',
             'type' => 'select',
             'options' => ['UCAS', 'Islamic University of Gaza', 'Palestine University', 'Other'],
             'is_required' => true,
@@ -52,8 +52,8 @@ class FormFieldFactory extends Factory
 
     public function attendedBefore(int $order = 4): static
     {
-        return $this->state(fn() => [
-            'label' => 'Have you attended before?',
+        return $this->state(fn () => [
+            'label_ar' => 'Have you attended before?',
             'type' => 'radio',
             'options' => ['Yes', 'No'],
             'is_required' => false,

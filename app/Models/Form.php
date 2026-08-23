@@ -2,18 +2,26 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasTranslatableContent;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Form extends Model
 {
-    use HasFactory;
+    use HasFactory, HasTranslatableContent;
+
+    protected $attributes = [
+        'translation_status' => 'pending',
+    ];
 
     protected $fillable = [
-        'title',
-        'description',
+        'title_ar',
+        'title_en',
+        'description_ar',
+        'description_en',
         'slug',
         'is_active',
+        'translation_status',
     ];
 
     public function fields()
@@ -24,5 +32,10 @@ class Form extends Model
     public function submissions()
     {
         return $this->hasMany(FormSubmission::class);
+    }
+
+    protected function translatableFields(): array
+    {
+        return ['title', 'description'];
     }
 }

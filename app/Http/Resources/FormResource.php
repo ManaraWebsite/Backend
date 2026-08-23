@@ -16,10 +16,17 @@ class FormResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'title' => $this->title,
-            'description' => $this->description,
+            'title' => [
+                'ar' => $this->title_ar,
+                'en' => $this->title_en,
+            ],
+            'description' => [
+                'ar' => $this->description_ar,
+                'en' => $this->description_en,
+            ],
             'slug' => $this->slug,
             'is_active' => $this->is_active,
+            'translation_status' => $this->translation_status,
             'fields' => FormFieldResource::collection($this->whenLoaded('fields')),
         ];
     }

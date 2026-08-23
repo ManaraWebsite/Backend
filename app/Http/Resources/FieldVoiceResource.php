@@ -14,25 +14,30 @@ class FieldVoiceResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $base = [
+            'id' => $this->id,
+            'name' => $this->name,
+            'role' => [
+                'ar' => $this->role_ar,
+                'en' => $this->role_en,
+            ],
+            'quote' => [
+                'ar' => $this->quote_ar,
+                'en' => $this->quote_en,
+            ],
+            'image' => $this->image,
+            'created_at' => $this->created_at,
+        ];
+
         if ($request->user()?->role === 'admin') {
             return [
-                'id' => $this->id,
-                'name' => $this->name,
-                'role' => $this->role,
-                'quote' => $this->quote,
-                'image' => $this->image,
+                ...$base,
                 'is_published' => $this->is_published,
-                'created_at' => $this->created_at,
+                'translation_status' => $this->translation_status,
                 'updated_at' => $this->updated_at,
             ];
-        } else {
-            return [
-                'name' => $this->name,
-                'role' => $this->role,
-                'quote' => $this->quote,
-                'image' => $this->image,
-                'created_at' => $this->created_at,
-            ];
         }
+
+        return $base;
     }
 }

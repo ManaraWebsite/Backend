@@ -6,7 +6,6 @@ use App\Http\Requests\StoreFieldVoiceRequest;
 use App\Http\Requests\UpdateFieldVoiceRequest;
 use App\Http\Resources\FieldVoiceResource;
 use App\Models\FieldVoice;
-use Illuminate\Http\Request;
 
 class FieldVoiceController extends Controller
 {
@@ -32,6 +31,14 @@ class FieldVoiceController extends Controller
                 ->store('field-voices', 'public');
         }
 
+        $validatedData['quote_ar'] = $validatedData['quote'];
+        unset($validatedData['quote']);
+
+        if (array_key_exists('role', $validatedData)) {
+            $validatedData['role_ar'] = $validatedData['role'];
+            unset($validatedData['role']);
+        }
+
         $fieldVoice = FieldVoice::create($validatedData);
 
         return new FieldVoiceResource($fieldVoice);
@@ -47,6 +54,16 @@ class FieldVoiceController extends Controller
         if ($request->hasFile('image')) {
             $validatedData['image'] = $request->file('image')
                 ->store('field-voices', 'public');
+        }
+
+        if (array_key_exists('quote', $validatedData)) {
+            $validatedData['quote_ar'] = $validatedData['quote'];
+            unset($validatedData['quote']);
+        }
+
+        if (array_key_exists('role', $validatedData)) {
+            $validatedData['role_ar'] = $validatedData['role'];
+            unset($validatedData['role']);
         }
 
         $fieldVoice->update($validatedData);

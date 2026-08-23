@@ -19,13 +19,13 @@ class FieldVoiceFactory extends Factory
     {
         return [
             'name' => fake()->name(),
-            'role' => fake()->randomElement([
+            'role_ar' => fake()->randomElement([
                 'Volunteer',
                 'Journalist',
                 'Student',
                 'Community Member',
             ]),
-            'quote' => fake()->paragraph(),
+            'quote_ar' => fake()->paragraph(),
             'image' => null,
             'is_published' => fake()->boolean(80),
         ];

@@ -24,12 +24,12 @@ class FormFactory extends Factory
             'Intro to System Design',
             'Clean Code Workshop',
             'Git & GitHub Fundamentals',
-        ]) . ' #' . fake()->numberBetween(1, 5);
+        ]).' #'.fake()->numberBetween(1, 5);
 
         return [
-            'title' => $title,
-            'slug' => Str::slug($title) . '-' . fake()->unique()->numberBetween(1, 9999),
-            'description' => fake()->paragraph(),
+            'title_ar' => $title,
+            'slug' => Str::slug($title).'-'.fake()->unique()->numberBetween(1, 9999),
+            'description_ar' => fake()->paragraph(),
             'is_active' => fake()->boolean(80),
         ];
     }

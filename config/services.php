@@ -35,4 +35,13 @@ return [
         ],
     ],
 
+    'translation' => [
+        'provider' => env('TRANSLATION_PROVIDER', 'gemini'),
+    ],
+
+    'gemini' => [
+        'key' => env('GEMINI_API_KEY'),
+        'translation_model' => env('GEMINI_TRANSLATION_MODEL', 'gemini-3.5-flash'),
+    ],
+
 ];

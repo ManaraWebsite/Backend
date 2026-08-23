@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\FormSubmissionResource;
 use App\Models\Form;
-use Illuminate\Http\Request;
 
 class FormSubmissionController extends Controller
 {
@@ -29,10 +28,10 @@ class FormSubmissionController extends Controller
      */
     public function export(Form $form)
     {
-        $form->load(['fields' => fn($q) => $q->orderBy('order')]);
+        $form->load(['fields' => fn ($q) => $q->orderBy('order')]);
         $submissions = $form->submissions()->with('answers')->orderBy('submitted_at')->get();
 
-        $filename = $form->slug . '-submissions-' . now()->format('Y-m-d') . '.csv';
+        $filename = $form->slug.'-submissions-'.now()->format('Y-m-d').'.csv';
 
         return response()->streamDownload(function () use ($form, $submissions) {
             $handle = fopen('php://output', 'w');
@@ -41,7 +40,7 @@ class FormSubmissionController extends Controller
             fwrite($handle, "\xEF\xBB\xBF");
 
             // Header row: Submitted at + one column per form field, in order
-            $headers = ['Submitted at', ...$form->fields->pluck('label')];
+            $headers = ['Submitted at', ...$form->fields->pluck('label_ar')];
             fputcsv($handle, $headers);
 
             foreach ($submissions as $submission) {

@@ -7,7 +7,6 @@ use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
 use App\Http\Resources\PostResource;
 use App\Models\Post;
-use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class PostController extends Controller
@@ -29,7 +28,7 @@ class PostController extends Controller
 
         $validatedData['author_id'] = $request->user()->id;
 
-        $validatedData['slug'] = Str::random(8) . '-' . Str::slug($validatedData['title']);
+        $validatedData['slug'] = Str::random(8).'-'.Str::slug($validatedData['title']);
 
         if ($validatedData['status'] === 'published') {
             $validatedData['published_at'] = now();
@@ -39,6 +38,10 @@ class PostController extends Controller
             $validatedData['cover_image'] = $request->file('cover_image')
                 ->store('posts', 'public');
         }
+
+        $validatedData['title_ar'] = $validatedData['title'];
+        $validatedData['content_ar'] = $validatedData['content'];
+        unset($validatedData['title'], $validatedData['content']);
 
         $post = Post::create($validatedData);
 
@@ -69,6 +72,16 @@ class PostController extends Controller
         if ($request->hasFile('cover_image')) {
             $validatedData['cover_image'] = $request->file('cover_image')
                 ->store('posts', 'public');
+        }
+
+        if (array_key_exists('title', $validatedData)) {
+            $validatedData['title_ar'] = $validatedData['title'];
+            unset($validatedData['title']);
+        }
+
+        if (array_key_exists('content', $validatedData)) {
+            $validatedData['content_ar'] = $validatedData['content'];
+            unset($validatedData['content']);
         }
 
         $post->update($validatedData);
@@ -102,7 +115,7 @@ class PostController extends Controller
 
     public function unpublish(Post $post)
     {
-        if (!$post->isPublished()) {
+        if (! $post->isPublished()) {
             return response()->json(['message' => 'Post is not published.'], 400);
         }
 

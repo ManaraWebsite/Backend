@@ -24,10 +24,10 @@ class PostFactory extends Factory
 
         return [
             'author_id' => User::factory(),
-            'title' => $title,
-            'slug' => Str::slug($title) . '-' . fake()->unique()->numberBetween(1, 9999),
-            'content' => implode("\n\n", fake()->paragraphs(6)),
-            'cover_image' => 'https://picsum.photos/seed/' . fake()->uuid() . '/800/400',
+            'title_ar' => $title,
+            'slug' => Str::slug($title).'-'.fake()->unique()->numberBetween(1, 9999),
+            'content_ar' => implode("\n\n", fake()->paragraphs(6)),
+            'cover_image' => 'https://picsum.photos/seed/'.fake()->uuid().'/800/400',
             'status' => $status,
             'published_at' => $status === 'published' ? fake()->dateTimeBetween('-6 months', 'now') : null,
         ];

@@ -28,15 +28,15 @@ class FormController extends Controller
     {
         $form = DB::transaction(function () use ($request) {
             $form = Form::create([
-                'title' => $request->title,
-                'description' => $request->description,
+                'title_ar' => $request->title,
+                'description_ar' => $request->description,
                 'slug' => $this->generateUniqueSlug($request->title),
                 'is_active' => $request->boolean('is_active', false),
             ]);
 
             foreach ($request->input('fields') as $index => $fieldData) {
                 $form->fields()->create([
-                    'label' => $fieldData['label'],
+                    'label_ar' => $fieldData['label'],
                     'type' => $fieldData['type'],
                     'options' => $fieldData['options'] ?? null,
                     'is_required' => $fieldData['is_required'] ?? false,
@@ -80,7 +80,19 @@ class FormController extends Controller
     public function update(UpdateFormRequest $request, Form $form)
     {
         DB::transaction(function () use ($request, $form) {
-            $form->update($request->only(['title', 'description', 'slug', 'is_active']));
+            $formData = $request->only(['title', 'description', 'slug', 'is_active']);
+
+            if (array_key_exists('title', $formData)) {
+                $formData['title_ar'] = $formData['title'];
+                unset($formData['title']);
+            }
+
+            if (array_key_exists('description', $formData)) {
+                $formData['description_ar'] = $formData['description'];
+                unset($formData['description']);
+            }
+
+            $form->update($formData);
 
             if ($request->has('fields')) {
                 $submittedIds = [];
@@ -89,7 +101,7 @@ class FormController extends Controller
                     $field = $form->fields()->updateOrCreate(
                         ['id' => $fieldData['id'] ?? null],
                         [
-                            'label' => $fieldData['label'],
+                            'label_ar' => $fieldData['label'],
                             'type' => $fieldData['type'],
                             'options' => $fieldData['options'] ?? null,
                             'is_required' => $fieldData['is_required'] ?? false,
@@ -124,15 +136,15 @@ class FormController extends Controller
 
         $newForm = DB::transaction(function () use ($form) {
             $newForm = Form::create([
-                'title' => $form->title . ' (Copy)',
-                'description' => $form->description,
-                'slug' => $this->generateUniqueSlug($form->title),
+                'title_ar' => $form->title_ar.' (Copy)',
+                'description_ar' => $form->description_ar,
+                'slug' => $this->generateUniqueSlug($form->title_ar),
                 'is_active' => false,
             ]);
 
             foreach ($form->fields as $field) {
                 $newForm->fields()->create([
-                    'label' => $field->label,
+                    'label_ar' => $field->label_ar,
                     'type' => $field->type,
                     'options' => $field->options,
                     'is_required' => $field->is_required,
