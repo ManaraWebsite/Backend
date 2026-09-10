@@ -26,11 +26,18 @@ class FormController extends Controller
      */
     public function store(StoreFormRequest $request)
     {
-        $form = DB::transaction(function () use ($request) {
+        // Stored outside the transaction: a rollback cannot delete the file,
+        // so writing it first keeps the row and the file from disagreeing.
+        $imagePath = $request->hasFile('image')
+            ? $request->file('image')->store('forms', 'public')
+            : null;
+
+        $form = DB::transaction(function () use ($request, $imagePath) {
             $form = Form::create([
                 'title_ar' => $request->title,
                 'description_ar' => $request->description,
                 'slug' => $this->generateUniqueSlug($request->title),
+                'image' => $imagePath,
                 'is_active' => $request->boolean('is_active', false),
             ]);
 
@@ -92,6 +99,12 @@ class FormController extends Controller
                 unset($formData['description']);
             }
 
+            // Only replaced when a new file is uploaded; omitting `image`
+            // leaves the current one in place.
+            if ($request->hasFile('image')) {
+                $formData['image'] = $request->file('image')->store('forms', 'public');
+            }
+
             $form->update($formData);
 
             if ($request->has('fields')) {
@@ -139,6 +152,8 @@ class FormController extends Controller
                 'title_ar' => $form->title_ar.' (Copy)',
                 'description_ar' => $form->description_ar,
                 'slug' => $this->generateUniqueSlug($form->title_ar),
+                // Points at the original's file rather than copying it.
+                'image' => $form->image,
                 'is_active' => false,
             ]);
 

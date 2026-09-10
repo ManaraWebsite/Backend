@@ -2,11 +2,14 @@
 
 namespace App\Http\Resources;
 
+use App\Http\Resources\Concerns\ResolvesMediaUrls;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class FormResource extends JsonResource
 {
+    use ResolvesMediaUrls;
+
     /**
      * Transform the resource into an array.
      *
@@ -25,6 +28,7 @@ class FormResource extends JsonResource
                 'en' => $this->description_en,
             ],
             'slug' => $this->slug,
+            'image' => $this->mediaUrl($this->image),
             'is_active' => $this->is_active,
             'translation_status' => $this->translation_status,
             'fields' => FormFieldResource::collection($this->whenLoaded('fields')),

@@ -26,6 +26,7 @@ class StoreFormRequest extends FormRequest
         return [
             'title' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
+            'image' => ['nullable', 'image', 'max:2048'],
             'is_active' => ['sometimes', 'boolean'],
 
             'fields' => ['required', 'array', 'min:1'],
@@ -43,6 +44,8 @@ class StoreFormRequest extends FormRequest
         return [
             'fields.required' => 'A form must have at least one field.',
             'fields.*.type.in' => 'Invalid field type selected.',
+            'image.image' => 'The image must be a valid image file.',
+            'image.max' => 'The image may not be greater than 2048 kilobytes.',
         ];
     }
 

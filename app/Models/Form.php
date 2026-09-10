@@ -20,6 +20,7 @@ class Form extends Model
         'description_ar',
         'description_en',
         'slug',
+        'image',
         'is_active',
         'translation_status',
     ];

@@ -28,6 +28,7 @@ class UpdateFormRequest extends FormRequest
         return [
             'title' => ['sometimes', 'required', 'string', 'max:255'],
             'description' => ['sometimes', 'nullable', 'string'],
+            'image' => ['sometimes', 'nullable', 'image', 'max:2048'],
             'slug' => [
                 'sometimes',
                 'required',
@@ -56,6 +57,8 @@ class UpdateFormRequest extends FormRequest
     {
         return [
             'fields.*.id.exists' => 'One of the fields does not belong to this form.',
+            'image.image' => 'The image must be a valid image file.',
+            'image.max' => 'The image may not be greater than 2048 kilobytes.',
         ];
     }
 
