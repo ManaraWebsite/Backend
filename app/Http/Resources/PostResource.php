@@ -2,11 +2,14 @@
 
 namespace App\Http\Resources;
 
+use App\Http\Resources\Concerns\ResolvesMediaUrls;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class PostResource extends JsonResource
 {
+    use ResolvesMediaUrls;
+
     /**
      * Transform the resource into an array.
      *
@@ -25,7 +28,7 @@ class PostResource extends JsonResource
                 'en' => $this->content_en,
             ],
             'slug' => $this->slug,
-            'cover_image' => $this->cover_image,
+            'cover_image' => $this->mediaUrl($this->cover_image),
             'status' => $this->status,
             'published_at' => $this->published_at,
         ];

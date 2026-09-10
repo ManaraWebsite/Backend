@@ -2,11 +2,14 @@
 
 namespace App\Http\Resources;
 
+use App\Http\Resources\Concerns\ResolvesMediaUrls;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class FieldVoiceResource extends JsonResource
 {
+    use ResolvesMediaUrls;
+
     /**
      * Transform the resource into an array.
      *
@@ -25,7 +28,7 @@ class FieldVoiceResource extends JsonResource
                 'ar' => $this->quote_ar,
                 'en' => $this->quote_en,
             ],
-            'image' => $this->image,
+            'image' => $this->mediaUrl($this->image),
             'created_at' => $this->created_at,
         ];
 
