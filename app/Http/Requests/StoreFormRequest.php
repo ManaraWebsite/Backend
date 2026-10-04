@@ -31,7 +31,7 @@ class StoreFormRequest extends FormRequest
 
             'fields' => ['required', 'array', 'min:1'],
             'fields.*.label' => ['required', 'string', 'max:255'],
-            'fields.*.type' => ['required', Rule::in(['text', 'email', 'number', 'date', 'select', 'radio', 'checkbox', 'textarea'])],
+            'fields.*.type' => ['required', Rule::in(['text', 'email', 'number', 'date', 'select', 'radio', 'checkbox', 'textarea', 'file'])],
             'fields.*.options' => ['nullable', 'array'],
             'fields.*.options.*' => ['string'],
             'fields.*.is_required' => ['sometimes', 'boolean'],

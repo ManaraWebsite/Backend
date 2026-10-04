@@ -45,7 +45,7 @@ class UpdateFormRequest extends FormRequest
                 Rule::exists('form_fields', 'id')->where('form_id', $formId),
             ],
             'fields.*.label' => ['required', 'string', 'max:255'],
-            'fields.*.type' => ['required', Rule::in(['text', 'email', 'number', 'date', 'select', 'radio', 'checkbox', 'textarea'])],
+            'fields.*.type' => ['required', Rule::in(['text', 'email', 'number', 'date', 'select', 'radio', 'checkbox', 'textarea', 'file'])],
             'fields.*.options' => ['nullable', 'array'],
             'fields.*.options.*' => ['string'],
             'fields.*.is_required' => ['sometimes', 'boolean'],

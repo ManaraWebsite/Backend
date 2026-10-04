@@ -48,7 +48,13 @@ class FormSubmissionController extends Controller
 
                 $row = [$submission->submitted_at];
                 foreach ($form->fields as $field) {
-                    $row[] = $answersByField->get($field->id)?->answer ?? '';
+                    $answer = $answersByField->get($field->id);
+
+                    // A CSV is opened long after it's downloaded, so file
+                    // links get a longer window than the API's one hour.
+                    $row[] = $field->type === 'file'
+                        ? $answer?->fileUrl(now()->addDays(7)) ?? ''
+                        : $answer?->answer ?? '';
                 }
 
                 fputcsv($handle, $row);

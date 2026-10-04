@@ -7,6 +7,7 @@ use App\Http\Resources\FormResource;
 use App\Models\Form;
 use App\Models\SubmissionAnswer;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 
 class FormController extends Controller
@@ -25,12 +26,21 @@ class FormController extends Controller
 
     public function submit(SubmitFormRequest $request, Form $form)
     {
-        $submission = DB::transaction(function () use ($request, $form) {
+        // Uploads from `file` fields are swapped for their stored path. They're
+        // written before the transaction because a rollback cannot delete a
+        // file, and to the private disk because they're applicants' documents:
+        // admins reach them only through expiring signed links.
+        $answers = collect($request->validated('answers', []))
+            ->map(fn ($answer) => $answer instanceof UploadedFile
+                ? $answer->store("submissions/{$form->id}", 'local')
+                : $answer);
+
+        $submission = DB::transaction(function () use ($answers, $form) {
             $submission = $form->submissions()->create([
                 'submitted_at' => now(),
             ]);
 
-            foreach ($request->validated('answers', []) as $fieldId => $answer) {
+            foreach ($answers as $fieldId => $answer) {
                 SubmissionAnswer::create([
                     'submission_id' => $submission->id,
                     'field_id' => $fieldId,

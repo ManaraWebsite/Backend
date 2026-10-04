@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\File;
 
 class SubmitFormRequest extends FormRequest
 {
@@ -41,6 +42,7 @@ class SubmitFormRequest extends FormRequest
                 in_array($field->type, ['select', 'radio'])
                 => Rule::in($field->options ?? []),
                 'checkbox' => 'array', // multi-select, validated per-item below
+                'file' => File::types(['pdf'])->max(5 * 1024), // kilobytes
                 default => 'string',
             };
 
@@ -59,6 +61,11 @@ class SubmitFormRequest extends FormRequest
         return [
             'answers.*.required' => 'This field is required.',
             'answers.*.in' => 'The selected value is not a valid option.',
+            'answers.*.file' => 'This field must be a file.',
+            'answers.*.mimes' => 'The file must be a PDF.',
+            'answers.*.max' => 'The file may not be greater than 5 MB.',
+            // Also what PHP's own upload_max_filesize rejection surfaces as.
+            'answers.*.uploaded' => 'The file failed to upload. It may be too large.',
         ];
     }
 }
