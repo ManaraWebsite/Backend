@@ -28,7 +28,7 @@ class PostController extends Controller
 
         $validatedData['author_id'] = $request->user()->id;
 
-        $validatedData['slug'] = Str::random(8).'-'.Str::slug($validatedData['title']);
+        $validatedData['slug'] = Str::random(8) . '-' . Str::slug($validatedData['title_ar'] ?? $validatedData['title_en']);
 
         if ($validatedData['status'] === 'published') {
             $validatedData['published_at'] = now();
@@ -39,8 +39,8 @@ class PostController extends Controller
                 ->store('posts', 'public');
         }
 
-        $validatedData['title_ar'] = $validatedData['title'];
-        $validatedData['content_ar'] = $validatedData['content'];
+        $validatedData['title_ar'] = $validatedData['title_ar'] ?? $validatedData['title_en'];
+        $validatedData['content_ar'] = $validatedData['content_ar'] ?? $validatedData['content_en'];
         unset($validatedData['title'], $validatedData['content']);
 
         $post = Post::create($validatedData);
