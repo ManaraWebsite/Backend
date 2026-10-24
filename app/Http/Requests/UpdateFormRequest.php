@@ -28,6 +28,7 @@ class UpdateFormRequest extends FormRequest
         return [
             'title' => ['sometimes', 'required', 'string', 'max:255'],
             'description' => ['sometimes', 'nullable', 'string'],
+            'remove_image' => ['sometimes', 'boolean'],
             'image' => ['sometimes', 'nullable', 'image', 'max:2048'],
             'slug' => [
                 'sometimes',

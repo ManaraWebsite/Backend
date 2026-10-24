@@ -99,8 +99,10 @@ class FormController extends Controller
                 unset($formData['description']);
             }
 
-            // Only replaced when a new file is uploaded; omitting `image`
-            // leaves the current one in place.
+            // Duplicates may share this file, so removal only clears this form's reference.
+            if ($request->boolean('remove_image')) {
+                $formData['image'] = null;
+            }
             if ($request->hasFile('image')) {
                 $formData['image'] = $request->file('image')->store('forms', 'public');
             }

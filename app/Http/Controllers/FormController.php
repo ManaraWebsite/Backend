@@ -15,6 +15,11 @@ class FormController extends Controller
     /**
      * Display the specified resource.
      */
+    public function index()
+    {
+        return FormResource::collection(Form::where('is_active', true)->latest()->get());
+    }
+
     public function show(Form $form)
     {
         abort_unless($form->is_active, 404);

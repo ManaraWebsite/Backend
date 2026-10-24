@@ -47,6 +47,7 @@ Route::apiResource('/posts', UserPostController::class)->only(['index', 'show'])
     'posts' => 'post:slug',
 ]);
 
+Route::get('/forms', [UserFormController::class, 'index'])->name('forms.index');
 Route::get('/forms/{form:slug}', [UserFormController::class, 'show'])->name('forms.show');
 Route::post('/forms/{form:slug}/submit', [UserFormController::class, 'submit'])->middleware('throttle:5,1')->name('forms.submit');
 
